@@ -1,14 +1,14 @@
 <?php
-include "intervall_helper.php";
+include "interval_helper.php";
 
-function testTestPointVsINtervall() {
+function testTestPointVsInterval() {
   foreach (array(1, 2, 3, 4, 5) as $value) {
-    echo( $value . " -> " . testPointVsINtervall($value, 2,4) . "\n"); 
+    echo( $value . " -> " . testPointVsInterval($value, 2,4) . "\n"); 
   }
 }
 
-echo "*** test1: testTestPointVsINtervall\n";
-testTestPointVsINtervall();
+echo "*** test1: testTestPointVsInterval\n";
+testTestPointVsInterval();
 
 
 function testCalulateUnion() {
