@@ -8,7 +8,7 @@ $gt = 4;
 
 $included = 5;
 
-function testPointVsINtervall($point, $x1, $x2)
+function testPointVsInterval($point, $x1, $x2)
 {
   $res = 0;
 
@@ -73,11 +73,11 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
   $isOpenZ1 = false;
   $isOpenZ2 = false;
 
-  switch ( testPointVsINtervall($y1,$x1,$x2)) {
+  switch ( testPointVsInterval($y1,$x1,$x2)) {
     case $equal_left:
       echo "here: " . $equal_left;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  echo " + " . $equal_left . " -> merge";
 	
@@ -131,7 +131,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
     case $equal_right:
       echo "here " . $equal_right;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  echo " error " . $equal_left;
 	  break;
@@ -178,7 +178,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
     case $lt:
       echo "here " . $lt;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  echo " + " . $equal_left;
 	  
@@ -240,7 +240,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
     case $gt:
       echo "here " . $gt;
     
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $gt:    
 	  echo " + " . $gt . " -> next";
 	  $result = $next;
@@ -254,7 +254,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
     case $included:
       echo "here " . $included;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  echo " error " . $equal_left;
 	  break;
@@ -350,11 +350,11 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
   $isOpenZ1 = false;
   $isOpenZ2 = false;
 
-  switch ( testPointVsINtervall($y1,$x1,$x2)) {
+  switch ( testPointVsInterval($y1,$x1,$x2)) {
     case $equal_left:
       echo "here: " . $equal_left;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  if ($isOpenX1 || $isOpenY1 || $isOpenY2) {
 	    echo " + " . $equal_left . " -> doNotIntersectStop";
@@ -413,7 +413,7 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
     case $equal_right:
       echo "here " . $equal_right;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  echo " error " . $equal_left;
 	  break;
@@ -465,7 +465,7 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
     case $lt:
       echo "here " . $lt;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  echo " + " . $equal_left;
 	  
@@ -527,7 +527,7 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
     case $gt:
       echo "here " . $gt;
     
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $gt:    
 	  echo " + " . $gt . " -> doNotIntersectContiniue";
 	  $result = $doNotIntersectContiniue;
@@ -541,7 +541,7 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
     case $included:
       echo "here " . $included;
  
-      switch ( testPointVsINtervall($y2,$x1,$x2)) {
+      switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case $equal_left:
 	  echo " error " . $equal_left;
 	  break;
