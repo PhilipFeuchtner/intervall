@@ -1,28 +1,22 @@
 <?php
 
-$equal_left = 1;
-$equal_right = 2;
+define ('EQUAL_LEFT', 1);
+define ('EQUAL_RIGHT', 2);
 
-$lt = 3;
-$gt = 4;
+define ('LT', 3);
+define ('GT', 4);
 
-$included = 5;
+define ('INCLUDED', 5);
 
 function testPointVsInterval($point, $x1, $x2)
 {
   $res = 0;
 
-  global $equal_left;
-  global $equal_right;
-  global $lt;
-  global $gt;
-  global $included;
-
-  if ($point < $x1) { $res = $lt; }
-  elseif ($point > $x2) { $res = $gt; }
-  elseif ($point == $x1) { $res = $equal_left; }
-  elseif ($point == $x2) { $res = $equal_right; }
-  else { $res = $included; }
+  if ($point < $x1) { $res = LT; }
+  elseif ($point > $x2) { $res = GT; }
+  elseif ($point == $x1) { $res = EQUAL_LEFT; }
+  elseif ($point == $x2) { $res = EQUAL_RIGHT; }
+  else { $res = INCLUDED; }
     
   return $res;
 }
@@ -43,78 +37,64 @@ returns
  -> right_expand + new interval
  
 */
-$error = 0;
+define ('ERROR', 0);
 
-$insert = 1;
-$next = 2;
-$merge = 3;
-$expand_right = 4;
+define ('INSERT', 1);
+define ('NEXT', 2);
+define ('MERGE', 3);
+define ('EXPAND_RIGHT', 4);
 
 function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $isOpenY2) {
 
-// globals
-  global $equal_left;
-  global $equal_right;
-  global $lt;
-  global $gt;
-  global $included;
-
-  global $error;
-  
-  global $insert;
-  global $next;
-  global $merge;
-  global $expand_right;
-
 // return values
-  $result = $error;
+  $result = ERROR;
   $z1 = 0;
   $z2 = 0;
   $isOpenZ1 = false;
   $isOpenZ2 = false;
 
   switch ( testPointVsInterval($y1,$x1,$x2)) {
-    case $equal_left:
-      echo "here: " . $equal_left;
+    case EQUAL_LEFT:
+      echo "here: " . EQUAL_LEFT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
-	  echo " + " . $equal_left . " -> merge";
+	case EQUAL_LEFT:
+	  echo " + " . EQUAL_LEFT . " -> merge";
 	
-	  $result = $merge;
+	  $result = MERGE;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1 && $isOpenY1 && $isOpenY2;
 	  $isOpenZ2 = $isOpenX2;
 	
 	  break;
-	case $equal_right:
-	  echo " + " . $equal_right . " -> expand_right";
+	case EQUAL_RIGHT:
+	  echo " + " . EQUAL_RIGHT . " -> expand_right";
 	
-	  $result = $expand_right;
+	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1 && $isOpenY1;
 	  $isOpenZ2 = $isOpenX2 && $isOpenY2;
 
 	  break;
-	case $lt:
-	  echo " error " . $lt; 
+	case LT:
+	  echo " error " . LT; 
 	  break;
-	case $gt:
-	  echo " + " . $gt. " -> expand_right";
+	case GT:
+	  echo " + " . GT. " -> expand_right";
 	
-	  $result = $expand_right;
+	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
 	  $z2 = $y2;
 	  $isOpenZ1 = $isOpenX1 && $isOpenY1;
 	  $isOpenZ2 = $isOpenY2;	
 
 	  break;
-	case $included:
-	  echo " + " . $included. " -> merge";
+	case INCLUDED:
+	  echo " + " . INCLUDED. " -> merge";
 	
-	  $result = $merge;
+	  $result = MERGE;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1 && $isOpenY1;
@@ -128,45 +108,45 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
     
       break;
     
-    case $equal_right:
-      echo "here " . $equal_right;
+    case EQUAL_RIGHT:
+      echo "here " . EQUAL_RIGHT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
-	  echo " error " . $equal_left;
+	case EQUAL_LEFT:
+	  echo " error " . EQUAL_LEFT;
 	  break;
-	case $equal_right:
-	  echo " + " . $equal_right . " -> expand_right";
+	case EQUAL_RIGHT:
+	  echo " + " . EQUAL_RIGHT . " -> expand_right";
 	  
-	  $result = $expand_right;
+	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1;
 	  $isOpenZ2 = $isOpenX2 && $isOpenY1 && $isOpenY2;
 	  
 	  break;
-	case $lt:
-	  echo " error " . $lt;
+	case LT:
+	  echo " error " . LT;
 	  break;
-	case $gt:
-	  echo " + " . $gt;
+	case GT:
+	  echo " + " . GT;
 	  
 	  if ($isOpenX2 && $isOpenY1) {
 	    echo " -> next";
 	    
-	    $result = $next;
+	    $result = NEXT;
 	  } else {
 	    echo " -> expand_right";
 	    
-	    $result = $expand_right;
+	    $result = EXPAND_RIGHT;
 	    $z1 = $x1;
 	    $z2 = $y2;
 	    $isOpenZ1 = $isOpenX1;
 	    $isOpenZ2 = $isOpenY2;
 	  }
 	  break;
-	case $included:
-	  echo " error " . $included;
+	case INCLUDED:
+	  echo " error " . INCLUDED;
 	  break;
     
 	default:
@@ -175,21 +155,21 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
     
       break;
     
-    case $lt:
-      echo "here " . $lt;
+    case LT:
+      echo "here " . LT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
-	  echo " + " . $equal_left;
+	case EQUAL_LEFT:
+	  echo " + " . EQUAL_LEFT;
 	  
 	  if ($isOpenX1 && $isOpenY2) {
 	    echo " -> insert";
 	    
-	    $result = $insert;
+	    $result = INSERT;
 	  } else {
 	    echo " -> merge";
 	    
-	    $result = $merge;
+	    $result = MERGE;
 	    $z1 = $y1;
 	    $z2 = $x2;
 	    $isOpenZ1 = $isOpenY1;
@@ -197,34 +177,34 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  }
 	  
 	  break;
-	case $equal_right:
-	  echo " + " . $equal_right . " -> expand_right";
+	case EQUAL_RIGHT:
+	  echo " + " . EQUAL_RIGHT . " -> expand_right";
 	  
-	  $result = $expand_right;
+	  $result = EXPAND_RIGHT;
 	  $z1 = $y1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenY1;
 	  $isOpenZ2 = $isOpenX2 && $isOpenY2;
 	  break;
-	case $lt:
-	  echo " + " . $lt . " -> insert";
+	case LT:
+	  echo " + " . LT . " -> insert";
 	  
-	  $result = $insert;
+	  $result = INSERT;
 	  break;
-	case $gt:
-	  echo " + " . $gt . " -> expand_right";
+	case GT:
+	  echo " + " . GT . " -> expand_right";
 	  
-	  $result = $expand_right;
+	  $result = EXPAND_RIGHT;
 	  $z1 = $y1;
 	  $z2 = $y2;
 	  $isOpenZ1 = $isOpenY1;
 	  $isOpenZ2 = $isOpenY2;
 	  
 	  break;
-	case $included:
-	  echo " + " . $included . " -> merge";
+	case INCLUDED:
+	  echo " + " . INCLUDED . " -> merge";
 	  
-	  $result = $merge;
+	  $result = MERGE;
 	  $z1 = $y1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenY1;
@@ -237,13 +217,13 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
     
       break;
     
-    case $gt:
-      echo "here " . $gt;
+    case GT:
+      echo "here " . GT;
     
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $gt:    
-	  echo " + " . $gt . " -> next";
-	  $result = $next;
+	case GT:    
+	  echo " + " . GT . " -> next";
+	  $result = NEXT;
 	  break;
 	default:
 	  echo "error";
@@ -251,38 +231,38 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
   
       break;
       
-    case $included:
-      echo "here " . $included;
+    case INCLUDED:
+      echo "here " . INCLUDED;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
-	  echo " error " . $equal_left;
+	case EQUAL_LEFT:
+	  echo " error " . EQUAL_LEFT;
 	  break;
-	case $equal_right:
-	  echo " + " . $equal_right . " -> expand_right";
+	case EQUAL_RIGHT:
+	  echo " + " . EQUAL_RIGHT . " -> expand_right";
 	  
-	  $result = $expand_right;
+	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1;
 	  $isOpenZ2 = $isOpenX2 && $isOpenY2;
 	  break;
-	case $lt:
-	  echo " error " . $lt;
+	case LT:
+	  echo " error " . LT;
 	  break;
-	case $gt:
-	  echo " + " . $gt . " -> expand_right";
+	case GT:
+	  echo " + " . GT . " -> expand_right";
 	  
-	  $result = $expand_right;
+	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
 	  $z2 = $y2;
 	  $isOpenZ1 = $isOpenX1;
 	  $isOpenZ2 = $isOpenY2;
 	  break;
-	case $included:
-	  echo " + " . $included . " -> merge";
+	case INCLUDED:
+	  echo " + " . INCLUDED . " -> merge";
 	  
-	  $result = $merge;
+	  $result = MERGE;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1;
@@ -302,7 +282,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
   
   echo " ";
   
-  if ($result == $error || $result == $insert || $result == $next) {
+  if ($result == ERROR || $result == INSERT || $result == NEXT) {
     return ["result" => $result];
   } else {
     return ["result" => $result, 
@@ -322,81 +302,67 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 
 */
 
-$doIntersectStop = 1;
-$doIntersectContiniue = 2;
-$doNotIntersectContiniue = 3;
-$doNotIntersectStop = 4;
+define ('DOINTERSECT_STOP', 1);
+define ('DOINTERSECT_CONTINIUE', 2);
+define ('DONOTINTERSECT_CONTINIUE', 3);
+define ('DONOTINTERSECT_STOP', 4);
 
 function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $isOpenY2) {
 
-// globals
-  global $equal_left;
-  global $equal_right;
-  global $lt;
-  global $gt;
-  global $included;
-
-  global $error;
-  
-  global $doIntersectContiniue;
-  global $doIntersectStop;
-  global $doNotIntersectContiniue;
-  global $doNotIntersectStop;
-
 // return values
-  $result = $error;
+  $result = ERROR;
   $z1 = 0;
   $z2 = 0;
   $isOpenZ1 = false;
   $isOpenZ2 = false;
 
   switch ( testPointVsInterval($y1,$x1,$x2)) {
-    case $equal_left:
-      echo "here: " . $equal_left;
+    case EQUAL_LEFT:
+      echo "here: " . EQUAL_LEFT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
+	case EQUAL_LEFT:
 	  if ($isOpenX1 || $isOpenY1 || $isOpenY2) {
-	    echo " + " . $equal_left . " -> doNotIntersectStop";
+	    echo " + " . EQUAL_LEFT . " -> doNotIntersectStop";
 	    
-	    $result = $doNotIntersectStop;
+	    $result = DONOTINTERSECT_STOP;
 	  } else {
-	    echo " + " . $equal_left . " -> doIntersectStop";
+	    echo " + " . EQUAL_LEFT . " -> doIntersectStop";
 	    
-	    $result = $doIntersectStop;
+	    $result = DOINTERSECT_STOP;
 	    $z1 = $x1;
 	    $z2 = $x1;
 	    $isOpenZ1 = false;
 	    $isOpenZ2 = false;
 	  }
 	  break;
-	case $equal_right:
-	  echo " + " . $equal_right . " -> doIntersectContiniue";
+	case EQUAL_RIGHT:
+	  echo " + " . EQUAL_RIGHT . " -> doIntersectContiniue";
 	
-	  $result = $doIntersectContiniue;
+	  $result = DOINTERSECT_CONTINIUE;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1 || $isOpenY1;
 	  $isOpenZ2 = $isOpenX2 || $isOpenY2;
 
 	  break;
-	case $lt:
-	  echo " error " . $lt; 
+	case LT:
+	  echo " error " . LT; 
 	  break;
-	case $gt:
-	  echo " + " . $gt. " -> doIntersectContiniue";
+	case GT:
+	  echo " + " . GT. " -> doIntersectContiniue";
 	
-	  $result = $doIntersectContiniue;
+	  $result = DOINTERSECT_CONTINIUE;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1 || $isOpenY1;
 	  $isOpenZ2 = $isOpenX2;	
 
 	  break;
-	case $included:
-	  echo " + " . $included. " -> doIntersectStop";
+	case INCLUDED:
+	  echo " + " . INCLUDED. " -> doIntersectStop";
 	
-	  $result = $doIntersectStop;
+	  $result = DOINTERSECT_STOP;
 	  $z1 = $x1;
 	  $z2 = $y2;
 	  $isOpenZ1 = $isOpenX1 || $isOpenY1;
@@ -410,50 +376,50 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
     
       break;
     
-    case $equal_right:
-      echo "here " . $equal_right;
+    case EQUAL_RIGHT:
+      echo "here " . EQUAL_RIGHT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
-	  echo " error " . $equal_left;
+	case EQUAL_LEFT:
+	  echo " error " . EQUAL_LEFT;
 	  break;
-	case $equal_right:
+	case EQUAL_RIGHT:
 	  if ($isOpenX2 || $isOpenY1 || $isOpenY2) {
-	    echo " + " . $equal_left . " -> doNotIntersectStop";
+	    echo " + " . EQUAL_LEFT . " -> doNotIntersectStop";
 	    
-	    $result = $doNotIntersectContiniue;
+	    $result = DONOTINTERSECT_CONTINIUE;
 	  } else {
-	    echo " + " . $equal_left . " -> doIntersectContiniue";
+	    echo " + " . EQUAL_LEFT . " -> doIntersectContiniue";
 	    
-	    $result = $doIntersectContiniue;
+	    $result = DOINTERSECT_CONTINIUE;
 	    $z1 = $x2;
 	    $z2 = $x2;
 	    $isOpenZ1 = false;
 	    $isOpenZ2 = false;
 	  }	  
 	  break;
-	case $lt:
-	  echo " error " . $lt;
+	case LT:
+	  echo " error " . LT;
 	  break;
-	case $gt:
-	  echo " + " . $gt;
+	case GT:
+	  echo " + " . GT;
 	  
 	  if ($isOpenX2 || $isOpenY1) {
 	    echo " -> doNotIntersectContiniue";
 	    
-	    $result = $doNotIntersectContiniue;
+	    $result = DONOTINTERSECT_CONTINIUE;
 	  } else {
 	    echo " -> doIntersectContiniue";
 	    
-	    $result = $doIntersectContiniue;
+	    $result = DOINTERSECT_CONTINIUE;
 	    $z1 = $x2;
 	    $z2 = $x2;
 	    $isOpenZ1 = false;
 	    $isOpenZ2 = false;
 	  }
 	  break;
-	case $included:
-	  echo " error " . $included;
+	case INCLUDED:
+	  echo " error " . INCLUDED;
 	  break;
     
 	default:
@@ -462,21 +428,21 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
     
       break;
     
-    case $lt:
-      echo "here " . $lt;
+    case LT:
+      echo "here " . LT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
-	  echo " + " . $equal_left;
+	case EQUAL_LEFT:
+	  echo " + " . EQUAL_LEFT;
 	  
 	  if ($isOpenX1 || $isOpenY2) {
 	    echo " -> doNotIntersectStop";
 	    
-	    $result = $doNotIntersectStop;
+	    $result = DONOTINTERSECT_STOP;
 	  } else {
 	    echo " -> doIntersectStop";
 	    
-	    $result = $doIntersectStop;
+	    $result = DOINTERSECT_STOP;
 	    $z1 = $x1;
 	    $z2 = $x1;
 	    $isOpenZ1 = false;
@@ -484,34 +450,34 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
 	  }
 	  
 	  break;
-	case $equal_right:
-	  echo " + " . $equal_right . " -> doIntersectContiniue";
+	case EQUAL_RIGHT:
+	  echo " + " . EQUAL_RIGHT . " -> doIntersectContiniue";
 	  
-	  $result = $doIntersectContiniue;
+	  $result = DOINTERSECT_CONTINIUE;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1;
 	  $isOpenZ2 = $isOpenX2 || $isOpenY2;
 	  break;
-	case $lt:
-	  echo " + " . $lt . " -> doNotIntersectStop";
+	case LT:
+	  echo " + " . LT . " -> doNotIntersectStop";
 	  
-	  $result = $doNotIntersectStop;
+	  $result = DONOTINTERSECT_STOP;
 	  break;
-	case $gt:
-	  echo " + " . $gt . " -> doIntersectContiniue";
+	case GT:
+	  echo " + " . GT . " -> doIntersectContiniue";
 	  
-	  $result = $doIntersectContiniue;
+	  $result = DOINTERSECT_CONTINIUE;
 	  $z1 = $x1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenX1;
 	  $isOpenZ2 = $isOpenX2;
 	  
 	  break;
-	case $included:
-	  echo " + " . $included . " -> doIntersectStop";
+	case INCLUDED:
+	  echo " + " . INCLUDED . " -> doIntersectStop";
 	  
-	  $result = $doIntersectStop;
+	  $result = DOINTERSECT_STOP;
 	  $z1 = $x1;
 	  $z2 = $y2;
 	  $isOpenZ1 = $isOpenX1;
@@ -524,13 +490,13 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
     
       break;
     
-    case $gt:
-      echo "here " . $gt;
+    case GT:
+      echo "here " . GT;
     
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $gt:    
-	  echo " + " . $gt . " -> doNotIntersectContiniue";
-	  $result = $doNotIntersectContiniue;
+	case GT:    
+	  echo " + " . GT . " -> doNotIntersectContiniue";
+	  $result = DONOTINTERSECT_CONTINIUE;
 	  break;
 	default:
 	  echo "error";
@@ -538,38 +504,38 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
   
       break;
       
-    case $included:
-      echo "here " . $included;
+    case INCLUDED:
+      echo "here " . INCLUDED;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
-	case $equal_left:
-	  echo " error " . $equal_left;
+	case EQUAL_LEFT:
+	  echo " error " . EQUAL_LEFT;
 	  break;
-	case $equal_right:
-	  echo " + " . $equal_right . " -> doIntersectContiniue";
+	case EQUAL_RIGHT:
+	  echo " + " . EQUAL_RIGHT . " -> doIntersectContiniue";
 	  
-	  $result = $doIntersectContiniue;
+	  $result = DOINTERSECT_CONTINIUE;
 	  $z1 = $y1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenY1;
 	  $isOpenZ2 = $isOpenX2 || $isOpenY2;
 	  break;
-	case $lt:
-	  echo " error " . $lt;
+	case LT:
+	  echo " error " . LT;
 	  break;
-	case $gt:
-	  echo " + " . $gt . " -> doIntersectContiniue";
+	case GT:
+	  echo " + " . GT . " -> doIntersectContiniue";
 	  
-	  $result = $doIntersectContiniue;
+	  $result = DOINTERSECT_CONTINIUE;
 	  $z1 = $y1;
 	  $z2 = $x2;
 	  $isOpenZ1 = $isOpenY1;
 	  $isOpenZ2 = $isOpenX2;
 	  break;
-	case $included:
-	  echo " + " . $included . " -> doIntersectStop";
+	case INCLUDED:
+	  echo " + " . INCLUDED . " -> doIntersectStop";
 	  
-	  $result = $doIntersectStop;
+	  $result = DOINTERSECT_STOP;
 	  $z1 = $y1;
 	  $z2 = $y2;
 	  $isOpenZ1 = $isOpenY1;
@@ -589,7 +555,7 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
   
   echo " ";
   
-  if ($result == $error || $result == $doNotIntersectStop || $result == $doNotIntersectContiniue) {
+  if ($result == ERROR || $result == DONOTINTERSECT_STOP || $result == DONOTINTERSECT_CONTINIUE) {
     return ["result" => $result];
   } else {
     return ["result" => $result, 
