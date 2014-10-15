@@ -32,7 +32,7 @@ isOpenX1, isOpenX2, isOpenY1, isOpenY2 -> interval border open vs closed
 
 returns 
  -> insert, if y1, y2 is left of x1, x2
- -> next if y1, y2 is right of x1, x2
+ -> SKIP if y1, y2 is right of x1, x2
  -> merge + new interval
  -> right_expand + new interval
  
@@ -40,7 +40,7 @@ returns
 define ('ERROR', 0);
 
 define ('INSERT', 1);
-define ('NEXT', 2);
+define ('SKIP', 2);
 define ('MERGE', 3);
 define ('EXPAND_RIGHT', 4);
 
@@ -55,11 +55,11 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 
   switch ( testPointVsInterval($y1,$x1,$x2)) {
     case EQUAL_LEFT:
-      echo "here: " . EQUAL_LEFT;
+      // echo "here: " . EQUAL_LEFT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case EQUAL_LEFT:
-	  echo " + " . EQUAL_LEFT . " -> merge";
+	  // echo " + " . EQUAL_LEFT . " -> merge";
 	
 	  $result = MERGE;
 	  $z1 = $x1;
@@ -69,7 +69,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	
 	  break;
 	case EQUAL_RIGHT:
-	  echo " + " . EQUAL_RIGHT . " -> expand_right";
+	  // echo " + " . EQUAL_RIGHT . " -> expand_right";
 	
 	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
@@ -79,10 +79,10 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 
 	  break;
 	case LT:
-	  echo " error " . LT; 
+	  // echo " error " . LT; 
 	  break;
 	case GT:
-	  echo " + " . GT. " -> expand_right";
+	  // echo " + " . GT. " -> expand_right";
 	
 	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
@@ -92,7 +92,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 
 	  break;
 	case INCLUDED:
-	  echo " + " . INCLUDED. " -> merge";
+	  // echo " + " . INCLUDED. " -> merge";
 	
 	  $result = MERGE;
 	  $z1 = $x1;
@@ -103,20 +103,20 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  break;
     
 	default:
-	  echo "error";
+	  // echo "error";
       }
     
       break;
     
     case EQUAL_RIGHT:
-      echo "here " . EQUAL_RIGHT;
+      // echo "here " . EQUAL_RIGHT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case EQUAL_LEFT:
-	  echo " error " . EQUAL_LEFT;
+	  // echo " error " . EQUAL_LEFT;
 	  break;
 	case EQUAL_RIGHT:
-	  echo " + " . EQUAL_RIGHT . " -> expand_right";
+	  // echo " + " . EQUAL_RIGHT . " -> expand_right";
 	  
 	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
@@ -126,17 +126,17 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  
 	  break;
 	case LT:
-	  echo " error " . LT;
+	  // echo " error " . LT;
 	  break;
 	case GT:
-	  echo " + " . GT;
+	  // echo " + " . GT;
 	  
 	  if ($isOpenX2 && $isOpenY1) {
-	    echo " -> next";
+	    // echo " -> SKIP";
 	    
-	    $result = NEXT;
+	    $result = SKIP;
 	  } else {
-	    echo " -> expand_right";
+	    // echo " -> expand_right";
 	    
 	    $result = EXPAND_RIGHT;
 	    $z1 = $x1;
@@ -146,28 +146,28 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  }
 	  break;
 	case INCLUDED:
-	  echo " error " . INCLUDED;
+	  // echo " error " . INCLUDED;
 	  break;
     
 	default:
-	  echo "error";
+	  // echo "error";
       }
     
       break;
     
     case LT:
-      echo "here " . LT;
+      // echo "here " . LT;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case EQUAL_LEFT:
-	  echo " + " . EQUAL_LEFT;
+	  // echo " + " . EQUAL_LEFT;
 	  
 	  if ($isOpenX1 && $isOpenY2) {
-	    echo " -> insert";
+	    // echo " -> insert";
 	    
 	    $result = INSERT;
 	  } else {
-	    echo " -> merge";
+	    // echo " -> merge";
 	    
 	    $result = MERGE;
 	    $z1 = $y1;
@@ -178,7 +178,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  
 	  break;
 	case EQUAL_RIGHT:
-	  echo " + " . EQUAL_RIGHT . " -> expand_right";
+	  // echo " + " . EQUAL_RIGHT . " -> expand_right";
 	  
 	  $result = EXPAND_RIGHT;
 	  $z1 = $y1;
@@ -187,12 +187,12 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  $isOpenZ2 = $isOpenX2 && $isOpenY2;
 	  break;
 	case LT:
-	  echo " + " . LT . " -> insert";
+	  // echo " + " . LT . " -> insert";
 	  
 	  $result = INSERT;
 	  break;
 	case GT:
-	  echo " + " . GT . " -> expand_right";
+	  // echo " + " . GT . " -> expand_right";
 	  
 	  $result = EXPAND_RIGHT;
 	  $z1 = $y1;
@@ -202,7 +202,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  
 	  break;
 	case INCLUDED:
-	  echo " + " . INCLUDED . " -> merge";
+	  // echo " + " . INCLUDED . " -> merge";
 	  
 	  $result = MERGE;
 	  $z1 = $y1;
@@ -218,12 +218,12 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
       break;
     
     case GT:
-      echo "here " . GT;
+      // echo "here " . GT;
     
       switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case GT:    
-	  echo " + " . GT . " -> next";
-	  $result = NEXT;
+	  // echo " + " . GT . " -> SKIP";
+	  $result = SKIP;
 	  break;
 	default:
 	  echo "error";
@@ -232,14 +232,14 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
       break;
       
     case INCLUDED:
-      echo "here " . INCLUDED;
+      // echo "here " . INCLUDED;
  
       switch ( testPointVsInterval($y2,$x1,$x2)) {
 	case EQUAL_LEFT:
-	  echo " error " . EQUAL_LEFT;
+	  // echo " error " . EQUAL_LEFT;
 	  break;
 	case EQUAL_RIGHT:
-	  echo " + " . EQUAL_RIGHT . " -> expand_right";
+	  // echo " + " . EQUAL_RIGHT . " -> expand_right";
 	  
 	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
@@ -248,10 +248,10 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  $isOpenZ2 = $isOpenX2 && $isOpenY2;
 	  break;
 	case LT:
-	  echo " error " . LT;
+	  // echo " error " . LT;
 	  break;
 	case GT:
-	  echo " + " . GT . " -> expand_right";
+	  // echo " + " . GT . " -> expand_right";
 	  
 	  $result = EXPAND_RIGHT;
 	  $z1 = $x1;
@@ -260,7 +260,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
 	  $isOpenZ2 = $isOpenY2;
 	  break;
 	case INCLUDED:
-	  echo " + " . INCLUDED . " -> merge";
+	  // echo " + " . INCLUDED . " -> merge";
 	  
 	  $result = MERGE;
 	  $z1 = $x1;
@@ -282,7 +282,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
   
   echo " ";
   
-  if ($result == ERROR || $result == INSERT || $result == NEXT) {
+  if ($result == ERROR || $result == INSERT || $result == SKIP) {
     return ["result" => $result];
   } else {
     return ["result" => $result, 
@@ -562,6 +562,129 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
       "left-border" => $z1, "right-border" => $z2, 
       "is-open-left" => $isOpenZ1, "is-open-right" => $isOpenZ2];
   }
+}
+
+// ######################################################################################################################
+
+function traverseUnion($border_left, $border_right, $isOpenLeft, $isOpenRight) {
+  $y1 = [];
+  
+  for($i=0; $i<count($border_left); $i++) {
+    $inskip = false;
+    $fallthrough = false;
+    
+    $z1 = [];
+    $z2 = [];
+    $isOpenZ1 = [];
+    $isOpenZ2 = [];
+  
+    if (count($y1) ==0) {
+    
+      $y1 = [$border_left[$i]];
+      $y2 = [$border_right[$i]];
+      $isOpenY1 = [$isOpenLeft[$i]];
+      $isOpenY2 = [$isOpenRight[$i]];
+
+    } else {
+    
+      $item_left =$border_left[$i];
+      $item_right = $border_right[$i];
+      $isOpenItemLeft = $isOpenLeft[$i];
+      $isOpenItemRight = $isOpenRight[$i];
+
+      for($j=0; $j<count($y1); $j++) {
+        $inskip = false;
+      
+	if (!$fallthrough) {
+      
+	  $result = calculateUnion($y1[$j], $y2[$j], $isOpenY1[$j], $isOpenY2[$j], 
+			           $item_left, $item_right, $isOpenItemLeft, $isOpenItemRight);
+	
+	  switch ($result["result"]) {
+	    case ERROR:
+	      echo "-> error";
+	      break;
+	    case INSERT:  
+	      $fallthrough = true;
+	      
+	      $z1[] = $item_left;
+      	      $z2[] = $item_right;
+	      $isOpenZ1[] = $isOpenItemLeft;
+      	      $isOpenZ2[] = $isOpenItemRight;
+      	      
+   	      $z1[] = $y1[$j];
+      	      $z2[] = $y2[$j];
+	      $isOpenZ1[] = $isOpenY1[$j];
+      	      $isOpenZ2[] = $isOpenY2[$j];   	      
+	      
+	      break;
+	    case SKIP:
+	      $inskip = true;
+	      
+	      $z1[] = $y1[$j];
+      	      $z2[] = $y2[$j];
+	      $isOpenZ1[] = $isOpenY1[$j];
+      	      $isOpenZ2[] = $isOpenY2[$j];
+
+	      break;
+	    case MERGE;
+	      $fallthrough = true;
+	      
+	      $z1[] = $result["left-border"];
+      	      $z2[] = $result["right-border"];
+	      $isOpenZ1[] = $result["is-open-left"];
+      	      $isOpenZ2[] = $result["is-open-right"];
+	      
+	      break;
+	    case EXPAND_RIGHT:
+	      
+	      $z1[] = $result["left-border"];
+      	      $z2[] = $result["right-border"];
+	      $isOpenZ1[] = $result["is-open-left"];
+      	      $isOpenZ2[] = $result["is-open-right"];      
+	      
+	      $item_left = $result["left-border"];
+      	      $item_right = $result["right-border"];
+	      $isOpenItemLeft = $result["is-open-left"];
+      	      $isOpenItemRight = $result["is-open-right"];
+	      
+	      break;
+	    default:
+	      echo "-> error";
+	  }
+	} else {
+	
+	  $z1[] = $y1[$j];
+      	  $z2[] = $y2[$j];
+	  $isOpenZ1[] = $isOpenY1[$j];
+      	  $isOpenZ2[] = $isOpenY2[$j];
+	  
+	} // if ! fallthrough
+      } // for j
+      
+      if ($inskip) {
+      	$z1[] = $item_left;
+	$z2[] = $item_right;
+	$isOpenZ1[] = $isOpenItemLeft;
+	$isOpenZ2[] = $isOpenItemRight;
+      } 
+      
+      $y1 = $z1;
+      $y2 = $z2;
+      $isOpenY1 = $isOpenZ1;
+      $isOpenY2 = $isOpenZ2;
+      
+      // echo var_dump($y1);
+      // echo var_dump($y2);
+      
+    } // if count == 0    
+  } // for i
+  
+  return [ "left-border" => $y1,
+	   "right-border" => $y2,
+	   "is-open-left" => $isOpenY1,
+	   "is-open-right" => $isOpenY2 ];
+	   
 }
 
 ?>

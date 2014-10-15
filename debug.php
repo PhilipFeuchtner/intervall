@@ -1,5 +1,6 @@
 <?php
-include "interval_helper.php";
+
+include "interval.php";
 
 function testTestPointVsInterval() {
   foreach (array(1, 2, 3, 4, 5) as $value) {
@@ -8,7 +9,7 @@ function testTestPointVsInterval() {
 }
 
 echo "*** test1: testTestPointVsInterval\n";
-testTestPointVsInterval();
+// testTestPointVsInterval();
 
 
 function testCalulateUnion() {
@@ -34,7 +35,7 @@ function testCalulateUnion() {
 }
 
 echo "*** test2: testCalulateUnion\n";
-testCalulateUnion();
+// testCalulateUnion();
 
 function testCalulateIntersection() {
 
@@ -59,5 +60,40 @@ function testCalulateIntersection() {
 }
 
 echo "*** test3: testCalulateIntersection\n";
-testCalulateIntersection();
+// testCalulateIntersection();
+
+$x1 = [10, 40, 42, 60];
+$x2 = [20, 50, 45, 70];
+$isOpenX1 = [false, false, false, false];
+$isOpenX2 = [false, false, false, false];
+
+function testTraverseUnion() {
+  global $x1;
+  global $x2;
+  global $isOpenX1;
+  global $isOpenX2;
+
+  var_dump(traverseUnion($x1, $x2, $isOpenX1, $isOpenX2));
+}
+
+function testTraverseIntersect($x1, $x2, $isOpenX1, $isOpenX2) {
+}
+
+
+echo "*** test4: testTraverseUnion\n";
+testTraverseUnion();
+
+echo "*** test5: testTraverseIntersect\n";
+// testTraverseIntersect($x1, $x2, $isOpenX1, $isOpenX2);
+
+echo "*** test6: testParseString\n";
+var_dump(parseString("(1,4] U [3,6)"));
+
+echo "*** test7: toString\n";
+echo toString($x1, $x2, $isOpenX1, $isOpenX2) ."\n";
+
+echo "*** test8: canonicInterval\n";
+echo canonicInterval( "(1,4] U [3,6)" ) . "\n";
+
+
 ?>
