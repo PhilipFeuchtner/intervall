@@ -87,7 +87,7 @@ echo "*** test5: testTraverseIntersect\n";
 // testTraverseIntersect($x1, $x2, $isOpenX1, $isOpenX2);
 
 echo "*** test6: testParseString\n";
-var_dump(parseString("(1,4] U [3,6) u (-oo, +oo) u 0,-oo)"));
+var_dump(parseString("(1,4] U [3,6) u (-oo, +oo) U One u 0,-oo)"));
 
 echo "*** test7: toString\n";
 echo toString($x1, $x2, $isOpenX1, $isOpenX2) ."\n";
@@ -95,5 +95,13 @@ echo toString($x1, $x2, $isOpenX1, $isOpenX2) ."\n";
 echo "*** test8: canonicInterval\n";
 echo canonicInterval( "(1,4] U [3,6)" ) . "\n";
 
+echo "*** test9: intersectionList\n";
+echo intersectionList( "(1,4] U [3,6) u 7,9" ) . "\n";
+echo intersectionList( "(1,4] U [3,oo) u 7,9" ) . "\n";
+
+echo "*** test10: intersection\n";
+echo intersection( "(1,4] U [3,6) u 7,9" ) . "\n";
+echo intersection( "(1,4] U [3,oo) u 7,9" ) . "\n";
+echo intersection( "(1,8] U [3,oo) u 7,9" ) . "\n";
 
 ?>

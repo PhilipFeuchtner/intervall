@@ -29,6 +29,11 @@ function parseString($input) {
   
   foreach($parts as $part) {
     // echo "-> " . $part . "\n";
+    
+    if (preg_match("/one/i", $part)) {
+      continue;
+    }
+    
     list($a,$b) = preg_split("/\s*,\s*/",$part);
     
     // missing colon
@@ -68,6 +73,10 @@ function parseString($input) {
 }
 
 function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
+  if (count($borderLeft) == 0) {
+    return "ONE";
+  }
+
   $results = [];
   
   for ($i=0; $i<count($borderLeft); $i++) {
@@ -100,6 +109,38 @@ function canonicInterval($input) {
   }
 }
 
+function intersectionList($input) {
+  $values = parseString($input);
+  
+  if ($values["has-error"]) {
+    return "input error";
+  } else {
+  
+    $result = traverseIntersection($values["border-left"], $values["border-right"], $values["is-open-left"], $values["is-open-right"]);
 
+    return toString($result["left-border"],
+		    $result["right-border"],
+		    $result["is-open-left"],
+		    $result["is-open-right"]);
+  }
+}
+
+function intersection($input) {
+  $values = parseString($input);
+  
+  if ($values["has-error"]) {
+    return "input error";
+  } else {
+  
+    $v1 = traverseIntersection($values["border-left"], $values["border-right"], $values["is-open-left"], $values["is-open-right"]);
+    // var_dump($v1);
+    $result = traverseUnion($v1["left-border"], $v1["right-border"], $v1["is-open-left"], $v1["is-open-right"]);
+
+    return toString($result["left-border"],
+		    $result["right-border"],
+		    $result["is-open-left"],
+		    $result["is-open-right"]);
+  }
+}
 
 ?>
