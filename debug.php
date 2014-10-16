@@ -87,7 +87,7 @@ echo "*** test5: testTraverseIntersect\n";
 // testTraverseIntersect($x1, $x2, $isOpenX1, $isOpenX2);
 
 echo "*** test6: testParseString\n";
-var_dump(parseString("(1,4] U [3,6)"));
+var_dump(parseString("(1,4] U [3,6) u (-oo, +oo) u 0,-oo)"));
 
 echo "*** test7: toString\n";
 echo toString($x1, $x2, $isOpenX1, $isOpenX2) ."\n";

@@ -2,34 +2,69 @@
 
 include "interval_helper.php";
 
+function parseFloat($input) {
+    if (preg_match("/-\s*oo/i",$input)) {
+      return -INF;
+    } elseif (preg_match("/\+?oo/i", $input)) {
+      return INF;
+    }
+    
+    return (float) preg_replace("/[\(\[]/"," ", $input);
+}
+
+// ######################################################################
+
 function parseString($input) {
+  $hasError = false;
 
   $borderLeft = [];
   $borderRight = [];
   $isOpenLeft = [];
   $isOpenRight = [];
 
-  $parts = preg_split("/\s*U\s*/",$input);
+  $parts = preg_split("/\s*U\s*/i",$input);
+  
+  // empty input
+  $hasError = (count($parts) == 0);
   
   foreach($parts as $part) {
     // echo "-> " . $part . "\n";
     list($a,$b) = preg_split("/\s*,\s*/",$part);
-    $bl = (float) preg_replace("/[\(\[]/"," ", $a);
-    $br = (float) $b;
+    
+    // missing colon
+    if (!isset($a) || !isset($b)) {
+	$hasError = true;
+	break;
+    }
+    
+    $bl = parseFloat($a);
+    $br = parseFloat($b);
     
     $iol = preg_match("/\(/", $a) > 0;
     $ior = preg_match("/\)/", $b) > 0;
     
-    $borderLeft[] = $bl;
-    $borderRight[] = $br;
+    // swap borders if necessary
+    if ($bl < $br) {
+      $borderLeft[] = $bl;
+      $borderRight[] = $br;
+    } else {
+      $borderLeft[] = $br;
+      $borderRight[] = $bl;    
+    }
+    
     $isOpenLeft[] = $iol;
     $isOpenRight[] = $ior;
   }
   
-  return ["border-left" => $borderLeft,
-	  "border-right" => $borderRight,
-	  "is-open-left" => $isOpenLeft,
-	  "is-open-right" => $isOpenRight];
+  if ($hasError) {
+    return ["has-error" => true];
+  } else {
+    return ["has-error" => false,
+	    "border-left" => $borderLeft,
+	    "border-right" => $borderRight,
+	    "is-open-left" => $isOpenLeft,
+	    "is-open-right" => $isOpenRight];
+  }
 }
 
 function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
@@ -52,12 +87,17 @@ function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
 function canonicInterval($input) {
   $values = parseString($input);
   
-  $result = traverseUnion($values["border-left"], $values["border-right"], $values["is-open-left"], $values["is-open-right"]);
+  if ($values["has-error"]) {
+    return "input error";
+  } else {
+  
+    $result = traverseUnion($values["border-left"], $values["border-right"], $values["is-open-left"], $values["is-open-right"]);
 
-  return toString($result["left-border"],
-		  $result["right-border"],
-		  $result["is-open-left"],
-		  $result["is-open-right"]);
+    return toString($result["left-border"],
+		    $result["right-border"],
+		    $result["is-open-left"],
+		    $result["is-open-right"]);
+  }
 }
 
 
