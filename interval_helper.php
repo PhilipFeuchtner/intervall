@@ -280,7 +280,7 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
       echo "error";
   }
   
-  echo " ";
+  // echo " ";
   
   if ($result == ERROR || $result == INSERT || $result == SKIP) {
     return ["result" => $result];
