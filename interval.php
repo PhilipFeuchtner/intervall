@@ -12,6 +12,16 @@ function parseFloat($input) {
     return (float) preg_replace("/[\(\[]/"," ", $input);
 }
 
+function floatToString($val) {
+  if (is_finite($val)) {
+    return "$val";
+  }
+  
+  $isNegative = ($val < 0);
+  
+  return $isNegative ? "-oo" : "oo";
+}
+
 // ######################################################################
 
 function parseString($input) {
@@ -65,8 +75,8 @@ function parseString($input) {
     return ["has-error" => true];
   } else {
     return ["has-error" => false,
-	    "border-left" => $borderLeft,
-	    "border-right" => $borderRight,
+	    "left-border" => $borderLeft,
+	    "right-border" => $borderRight,
 	    "is-open-left" => $isOpenLeft,
 	    "is-open-right" => $isOpenRight];
   }
@@ -81,8 +91,8 @@ function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
   
   for ($i=0; $i<count($borderLeft); $i++) {
     $a = $isOpenLeft[$i] ? "(" : "[";
-    $b = $borderLeft[$i];
-    $c = $borderRight[$i];
+    $b = floatToString($borderLeft[$i]);
+    $c = floatToString($borderRight[$i]);
     $d = $isOpenRight[$i] ? ")" : "]";
     
     $results[] = $a . $b . "," . $c . $d;
@@ -100,7 +110,7 @@ function canonicInterval($input) {
     return "input error";
   } else {
   
-    $result = traverseUnion($values["border-left"], $values["border-right"], $values["is-open-left"], $values["is-open-right"]);
+    $result = traverseUnion($values["left-border"], $values["right-border"], $values["is-open-left"], $values["is-open-right"]);
 
     return toString($result["left-border"],
 		    $result["right-border"],
@@ -116,7 +126,7 @@ function intersectionList($input) {
     return "input error";
   } else {
   
-    $result = traverseIntersection($values["border-left"], $values["border-right"], $values["is-open-left"], $values["is-open-right"]);
+    $result = traverseIntersection($values["left-border"], $values["right-border"], $values["is-open-left"], $values["is-open-right"]);
 
     return toString($result["left-border"],
 		    $result["right-border"],
@@ -132,7 +142,7 @@ function intersection($input) {
     return "input error";
   } else {
   
-    $v1 = traverseIntersection($values["border-left"], $values["border-right"], $values["is-open-left"], $values["is-open-right"]);
+    $v1 = traverseIntersection($values["left-border"], $values["right-border"], $values["is-open-left"], $values["is-open-right"]);
     // var_dump($v1);
     $result = traverseUnion($v1["left-border"], $v1["right-border"], $v1["is-open-left"], $v1["is-open-right"]);
 

@@ -91,6 +91,8 @@ var_dump(parseString("(1,4] U [3,6) u (-oo, +oo) U One u 0,-oo)"));
 
 echo "*** test7: toString\n";
 echo toString($x1, $x2, $isOpenX1, $isOpenX2) ."\n";
+$val = parseString("(1,4] U [3,6) u (-oo, +oo) U One u 0,-oo)");
+echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"]) . "\n";
 
 echo "*** test8: canonicInterval\n";
 echo canonicInterval( "(1,4] U [3,6)" ) . "\n";
@@ -103,5 +105,7 @@ echo "*** test10: intersection\n";
 echo intersection( "(1,4] U [3,6) u 7,9" ) . "\n";
 echo intersection( "(1,4] U [3,oo) u 7,9" ) . "\n";
 echo intersection( "(1,8] U [3,oo) u 7,9" ) . "\n";
+
+
 
 ?>
