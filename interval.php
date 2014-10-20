@@ -34,6 +34,10 @@ function parseString($input) {
 
   $parts = preg_split("/\s*U\s*/i",$input);
   
+  return parseParts($parts);
+}
+
+function parseParts($parts) {
   // empty input
   $hasError = (count($parts) == 0);
   
@@ -84,7 +88,7 @@ function parseString($input) {
 
 function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
   if (count($borderLeft) == 0) {
-    return "ONE";
+    return "DNE";
   }
 
   $results = [];
@@ -136,7 +140,7 @@ function intersectionList($input) {
 }
 
 function intersection($input) {
-  $values = parseString($input);
+  $values = parseParts($input);
   
   if ($values["has-error"]) {
     return "input error";

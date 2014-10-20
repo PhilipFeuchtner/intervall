@@ -102,10 +102,13 @@ echo intersectionList( "(1,4] U [3,6) u 7,9" ) . "\n";
 echo intersectionList( "(1,4] U [3,oo) u 7,9" ) . "\n";
 
 echo "*** test10: intersection\n";
-echo intersection( "(1,4] U [3,6) u 7,9" ) . "\n";
-echo intersection( "(1,4] U [3,oo) u 7,9" ) . "\n";
-echo intersection( "(1,8] U [3,oo) u 7,9" ) . "\n";
+echo intersection( ["(1,4]", "[3,6)", " 7,9"] ) . "\n";
+echo intersection( ["(1,4]", "[3,oo)", "7,9"] ) . "\n";
+echo intersection( ["(1,8]", "[3,oo)", "7,9"] ) . "\n";
+echo intersection( ["(3,9]", "[3,4)"]  ) . "\n";
 
+// $a = ["1,2","3,4","5,6"];
+// echo var_dump($a);
 
 
 ?>
