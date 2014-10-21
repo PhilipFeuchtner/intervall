@@ -3,23 +3,25 @@
 include "interval_helper.php";
 
 function parseFloat($input) {
-    if (preg_match("/-\s*oo/i",$input)) {
-      return -INF;
-    } elseif (preg_match("/\+?oo/i", $input)) {
-      return INF;
-    }
-    
-    return (float) preg_replace("/[\(\[]/"," ", $input);
-}
 
-function floatToString($val) {
-  if (is_finite($val)) {
-    return "$val";
+  if (preg_match("/-\s*oo/i",$input)) {
+    return array(-INF, "-oo");
+  } elseif (preg_match("/\+?oo/i", $input)) {
+    return array(INF, "oo");
   }
+    
+  // test: rational
+  if (preg_match("/\//", $input)) {
+    list($a, $b) = preg_split("/\//", $input);
   
-  $isNegative = ($val < 0);
-  
-  return $isNegative ? "-oo" : "oo";
+    $a1 = (int) preg_replace("/[\(\[]/"," ",$a);
+    $b1 = (int) preg_replace("/[\(\[]/"," ",$b);
+    $v = $a1/$b1;
+    return array($v, "$a1/$b1");
+  } else {
+    $v = (float) preg_replace("/[\(\[]/"," ", $input);
+    return array($v, "$v");
+  }
 }
 
 // ######################################################################
@@ -38,41 +40,51 @@ function parseParts($parts) {
   $isOpenLeft = array();
   $isOpenRight = array();
   
+  $index = array();
+  
   // empty input
   $hasError = (count($parts) == 0);
   
   foreach($parts as $part) {
     // echo "-> " . $part . "\n";
     
-    if (preg_match("/one/i", $part)) {
-      continue;
-    }
+    if (preg_match("/dne/i", $part)) {
+      $borderLeft[] = 0;
+      $borderRight[] = 0;
+      $isOpenLeft[] = true;
+      $isOpenRight[] = true;
+
+    } else {
     
-    list($a,$b) = preg_split("/\s*,\s*/",$part);
+      list($a,$b) = preg_split("/\s*,\s*/",$part);
     
-    // missing colon
-    if (!isset($a) || !isset($b)) {
+      // missing colon
+      if (!isset($a) || !isset($b)) {
 	$hasError = true;
 	break;
+      }
+    
+      list($bl, $v1) = parseFloat($a);
+      list($br, $v2) = parseFloat($b);
+    
+      $index["$bl"] = $v1;
+      $index["$br"] = $v2;
+    
+      $iol = preg_match("/\(/", $a) > 0;
+      $ior = preg_match("/\)/", $b) > 0;
+    
+      // swap borders if necessary
+      if ($bl < $br) {
+	$borderLeft[] = $bl;
+	$borderRight[] = $br;
+      } else {
+	$borderLeft[] = $br;
+	$borderRight[] = $bl;    
+      }
+    
+      $isOpenLeft[] = $iol;
+      $isOpenRight[] = $ior;
     }
-    
-    $bl = parseFloat($a);
-    $br = parseFloat($b);
-    
-    $iol = preg_match("/\(/", $a) > 0;
-    $ior = preg_match("/\)/", $b) > 0;
-    
-    // swap borders if necessary
-    if ($bl < $br) {
-      $borderLeft[] = $bl;
-      $borderRight[] = $br;
-    } else {
-      $borderLeft[] = $br;
-      $borderRight[] = $bl;    
-    }
-    
-    $isOpenLeft[] = $iol;
-    $isOpenRight[] = $ior;
   }
   
   if ($hasError) {
@@ -82,11 +94,12 @@ function parseParts($parts) {
 	    "left-border" => $borderLeft,
 	    "right-border" => $borderRight,
 	    "is-open-left" => $isOpenLeft,
-	    "is-open-right" => $isOpenRight);
+	    "is-open-right" => $isOpenRight,
+	    "index" => $index);
   }
 }
 
-function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
+function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight, $index) {
   if (count($borderLeft) == 0) {
     return "DNE";
   }
@@ -95,8 +108,8 @@ function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
   
   for ($i=0; $i<count($borderLeft); $i++) {
     $a = $isOpenLeft[$i] ? "(" : "[";
-    $b = floatToString($borderLeft[$i]);
-    $c = floatToString($borderRight[$i]);
+    $b = $index["$borderLeft[$i]"];
+    $c = $index["$borderRight[$i]"];
     $d = $isOpenRight[$i] ? ")" : "]";
     
     $results[] = $a . $b . "," . $c . $d;
@@ -119,7 +132,8 @@ function canonicInterval($input) {
     return toString($result["left-border"],
 		    $result["right-border"],
 		    $result["is-open-left"],
-		    $result["is-open-right"]);
+		    $result["is-open-right"],
+		    $values["index"]);
   }
 }
 
@@ -135,7 +149,8 @@ function intersectionList($input) {
     return toString($result["left-border"],
 		    $result["right-border"],
 		    $result["is-open-left"],
-		    $result["is-open-right"]);
+		    $result["is-open-right"],
+		    $values["index"]);
   }
 }
 
@@ -153,7 +168,8 @@ function intersection($input) {
     return toString($result["left-border"],
 		    $result["right-border"],
 		    $result["is-open-left"],
-		    $result["is-open-right"]);
+		    $result["is-open-right"],
+		    $values["index"]);
   }
 }
 

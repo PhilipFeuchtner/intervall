@@ -87,12 +87,12 @@ echo "*** test5: testTraverseIntersect\n";
 // testTraverseIntersect($x1, $x2, $isOpenX1, $isOpenX2);
 
 echo "*** test6: testParseString\n";
-var_dump(parseString("(1,4] U [3,6) u (-oo, +oo) U One u 0,-oo)"));
+var_dump(parseString("(1,4] U [3,6) u (-oo, +oo) U dne u 0,-oo)"));
+var_dump(parseString("(1/4,4] U [3,6/7) u (-oo, +oo) U DNE u 0/5,-oo)"));
 
 echo "*** test7: toString\n";
-echo toString($x1, $x2, $isOpenX1, $isOpenX2) ."\n";
-$val = parseString("(1,4] U [3,6) u (-oo, +oo) U One u 0,-oo)");
-echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"]) . "\n";
+$val = parseString("(1,4] U [3,6) u (-oo, +oo) U dne u 0,-oo) u 1/5, -oo u 2/3, 3/3");
+echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"], $val["index"]) . "\n";
 
 echo "*** test8: canonicInterval\n";
 echo canonicInterval( "(1,4] U [3,6)" ) . "\n";
@@ -110,5 +110,9 @@ echo intersection( ["(3,9]", "[3,4)"]  ) . "\n";
 // $a = ["1,2","3,4","5,6"];
 // echo var_dump($a);
 
+echo "*** test11: testParseFloat\n";
+echo var_dump(parseFloat("1")) . "\n";
+echo var_dump(parseFloat("-oo")) . "\n";
+echo var_dump(parseFloat("2/4")) . "\n";
 
 ?>
