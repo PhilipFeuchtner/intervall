@@ -25,19 +25,19 @@ function floatToString($val) {
 // ######################################################################
 
 function parseString($input) {
-  $hasError = false;
-
-  $borderLeft = [];
-  $borderRight = [];
-  $isOpenLeft = [];
-  $isOpenRight = [];
-
   $parts = preg_split("/\s*U\s*/i",$input);
   
   return parseParts($parts);
 }
 
 function parseParts($parts) {
+  $hasError = false;
+
+  $borderLeft = array();
+  $borderRight = array();
+  $isOpenLeft = array();
+  $isOpenRight = array();
+  
   // empty input
   $hasError = (count($parts) == 0);
   
@@ -76,13 +76,13 @@ function parseParts($parts) {
   }
   
   if ($hasError) {
-    return ["has-error" => true];
+    return array("has-error" => true);
   } else {
-    return ["has-error" => false,
+    return array("has-error" => false,
 	    "left-border" => $borderLeft,
 	    "right-border" => $borderRight,
 	    "is-open-left" => $isOpenLeft,
-	    "is-open-right" => $isOpenRight];
+	    "is-open-right" => $isOpenRight);
   }
 }
 
@@ -91,7 +91,7 @@ function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight) {
     return "DNE";
   }
 
-  $results = [];
+  $results = array();
   
   for ($i=0; $i<count($borderLeft); $i++) {
     $a = $isOpenLeft[$i] ? "(" : "[";

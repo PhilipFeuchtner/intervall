@@ -283,11 +283,11 @@ function calculateUnion($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpenY1, $is
   // echo " ";
   
   if ($result == ERROR || $result == INSERT || $result == SKIP) {
-    return ["result" => $result];
+    return array("result" => $result);
   } else {
-    return ["result" => $result, 
+    return array("result" => $result, 
       "left-border" => $z1, "right-border" => $z2, 
-      "is-open-left" => $isOpenZ1, "is-open-right" => $isOpenZ2];
+      "is-open-left" => $isOpenZ1, "is-open-right" => $isOpenZ2);
   }
 }
 
@@ -556,11 +556,11 @@ function calculateIntersection($x1, $x2, $isOpenX1, $isOpenX2, $y1, $y2, $isOpen
   // echo " ";
   
   if ($result == ERROR || $result == DONOTINTERSECT_STOP || $result == DONOTINTERSECT_CONTINIUE) {
-    return ["result" => $result];
+    return array("result" => $result);
   } else {
-    return ["result" => $result, 
+    return array("result" => $result, 
       "left-border" => $z1, "right-border" => $z2, 
-      "is-open-left" => $isOpenZ1, "is-open-right" => $isOpenZ2];
+      "is-open-left" => $isOpenZ1, "is-open-right" => $isOpenZ2);
   }
 }
 
@@ -573,10 +573,10 @@ function traverseUnion($border_left, $border_right, $isOpenLeft, $isOpenRight) {
     $inskip = false;
     $fallthrough = false;
     
-    $z1 = [];
-    $z2 = [];
-    $isOpenZ1 = [];
-    $isOpenZ2 = [];
+    $z1 = array();
+    $z2 = array();
+    $isOpenZ1 = array();
+    $isOpenZ2 = array();
   
     if (count($y1) ==0) {
     
@@ -680,19 +680,19 @@ function traverseUnion($border_left, $border_right, $isOpenLeft, $isOpenRight) {
     } // if count == 0    
   } // for i
   
-  return [ "left-border" => $y1,
+  return array( "left-border" => $y1,
 	   "right-border" => $y2,
 	   "is-open-left" => $isOpenY1,
-	   "is-open-right" => $isOpenY2 ];
+	   "is-open-right" => $isOpenY2 );
 	   
 }
 
 function traverseIntersection($border_left, $border_right, $isOpenLeft, $isOpenRight) { 
 
-  $z1 = [];
-  $z2 = [];
-  $isOpenZ1 = [];
-  $isOpenZ2 = [];
+  $z1 = array();
+  $z2 = array();
+  $isOpenZ1 = array();
+  $isOpenZ2 = array();
     
   for ($i=0; $i<count($border_left); $i++) {
     for ($j=$i+1; $j<count($border_left); $j++) {
@@ -718,10 +718,10 @@ function traverseIntersection($border_left, $border_right, $isOpenLeft, $isOpenR
     } // for j
   } // for i
   
-  return [ "left-border" => $z1,
+  return array( "left-border" => $z1,
 	   "right-border" => $z2,
 	   "is-open-left" => $isOpenZ1,
-	   "is-open-right" => $isOpenZ2 ];
+	   "is-open-right" => $isOpenZ2 );
 }
 
 ?>
