@@ -2,6 +2,8 @@
 
 include "interval_helper.php";
 
+define("EMPTY_SET", "DNE");
+
 function parseFloat($input) {
 
   if (preg_match("/-\s*oo/i",$input)) {
@@ -33,6 +35,8 @@ function parseString($input) {
 }
 
 function parseParts($parts) {
+  global $emptySet;
+  
   $hasError = false;
 
   $borderLeft = array();
@@ -49,11 +53,12 @@ function parseParts($parts) {
     // echo "-> " . $part . "\n";
     
     if (preg_match("/dne/i", $part)) {
-      $borderLeft[] = 0;
-      $borderRight[] = 0;
-      $isOpenLeft[] = true;
-      $isOpenRight[] = true;
-
+    
+      $borderLeft[] = $emptySet["left-border"];
+      $borderRight[] = $emptySet["right-border"]; 
+      $isOpenLeft[] = $emptySet["is-open-left"];
+      $isOpenRight[] = $emptySet["is-open-right"];
+  
     } else {
     
       list($a,$b) = preg_split("/\s*,\s*/",$part);
@@ -101,22 +106,38 @@ function parseParts($parts) {
 
 function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight, $index) {
   if (count($borderLeft) == 0) {
-    return "DNE";
+    return EMPTY_SET;
   }
 
   $results = array();
   
   for ($i=0; $i<count($borderLeft); $i++) {
-    $a = $isOpenLeft[$i] ? "(" : "[";
-    $b = $index["$borderLeft[$i]"];
-    $c = $index["$borderRight[$i]"];
-    $d = $isOpenRight[$i] ? ")" : "]";
+    $v = toStringPart($borderLeft[$i], $borderRight[$i], $isOpenLeft[$i], $isOpenRight[$i], $index);
     
-    $results[] = $a . $b . "," . $c . $d;
+    if ($v != EMPTY_SET) $results[] = $v;
   }
   
-  return join(" U ", $results);
+  return count($results) == 0 ? EMPTY_SET : join(" U ", $results);
 }
+
+function toStringPart($borderLeft, $borderRight, $isOpenLeft, $isOpenRight, $index) {
+  global $emptySet;
+  
+  if ($borderLeft == $emptySet["left-border"] && $borderRight == $emptySet["right-border"] && 
+      $isOpenLeft == $emptySet["is-open-left"] && $isOpenRight == $emptySet["is-open-right"]) {
+     return EMPTY_SET;
+  }
+
+  $a = $isOpenLeft ? "(" : "[";
+  $b = $index["$borderLeft"];
+  $c = $index["$borderRight"];
+  $d = $isOpenRight ? ")" : "]";
+  
+  return $a . $b . "," . $c . $d;
+}
+
+
+
 
 // #############################################################################################
 
@@ -170,6 +191,23 @@ function intersection($input) {
 		    $result["is-open-left"],
 		    $result["is-open-right"],
 		    $values["index"]);
+  }
+}
+
+function mostCommonIntersection($input) {
+  $values = parseParts($input);
+  
+  if ($values["has-error"]) {
+    return "input error";
+  } else {
+  
+    $result = calculateMostCommonIntersection($values["left-border"], $values["right-border"], $values["is-open-left"], $values["is-open-right"]);
+
+    return toStringPart($result["left-border"],
+			$result["right-border"],
+			$result["is-open-left"],
+			$result["is-open-right"],
+			$values["index"]);
   }
 }
 

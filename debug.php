@@ -91,7 +91,9 @@ var_dump(parseString("(1,4] U [3,6) u (-oo, +oo) U dne u 0,-oo)"));
 var_dump(parseString("(1/4,4] U [3,6/7) u (-oo, +oo) U DNE u 0/5,-oo)"));
 
 echo "*** test7: toString\n";
-$val = parseString("(1,4] U [3,6) u (-oo, +oo) U dne u 0,-oo) u 1/5, -oo u 2/3, 3/3");
+$val = parseString("(1,4] U [3,6) u (-oo, +oo) U dne u 0,-oo) u dne, 1/5, -oo u 2/3, 3/3");
+echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"], $val["index"]) . "\n";
+$val = parseString("dne u dne");
 echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"], $val["index"]) . "\n";
 
 echo "*** test8: canonicInterval\n";
@@ -114,5 +116,10 @@ echo "*** test11: testParseFloat\n";
 echo var_dump(parseFloat("1")) . "\n";
 echo var_dump(parseFloat("-oo")) . "\n";
 echo var_dump(parseFloat("2/4")) . "\n";
+
+echo "*** test12: mostCommonIntersection\n";
+echo mostCommonIntersection( ["(-oo,3)","(-oo,1)","[-15/14,oo)"] ) . "\n";
+echo mostCommonIntersection( ["(-oo,-4/3)","(-oo,-1/4)","[-15/14,oo)"] ) . "\n";
+			  
 
 ?>
