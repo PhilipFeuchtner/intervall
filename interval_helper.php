@@ -772,5 +772,63 @@ function calculateMostCommonIntersection($border_left, $border_right, $isOpenLef
 	   "is-open-right" => $isOpenZ2 );
 }
 
+function calculateIntersectionSet($values) {
+    global $emptySet;
+
+     // case empy input
+     if (count($values) == 0) {
+        return $emptySet;
+     }
+
+     // start condition
+     $item = $values[0];
+     // $z1 = $value["left-border"];
+     // $z2 = $value["right-border"];
+     // $isOpenZ1 = $value["is-open-left"];
+     // $isOpenZ2 = $value["is-open-right"];
+
+    for ($i = 1; $i < count($values); $i++) {
+        $value = $values[$i];
+
+        $z1 = array();
+        $z2 = array();
+        $isOpenZ1 = array();
+        $isOpenZ2 = array();
+
+        for ($j=0; $j<count($value["left-border"]); $j++) {
+            for ($k=0; $k<count($item["left-border"]); $k++) {
+
+//            foreach($item as $y) {
+
+                $result = calculateIntersection($value["left-border"][$j], $value["right-border"][$j],
+                                                $value["is-open-left"][$j], $value["is-open-right"][$j],
+                                                $item["left-border"][$k], $item["right-border"][$k],
+                                                $item["is-open-left"][$k], $item["is-open-right"][$k]);
+
+                switch ($result["result"]) {
+            	case DOINTERSECT_STOP:
+            	case DOINTERSECT_CONTINIUE:
+
+            	    $z1[] = $result["left-border"];
+                  	$z2[] = $result["right-border"];
+            	    $isOpenZ1[] = $result["is-open-left"];
+                  	$isOpenZ2[] = $result["is-open-right"];
+
+                  	break;
+            	case DONOTINTERSECT_CONTINIUE:
+            	case DONOTINTERSECT_STOP:
+            	default:
+            	  // do noting
+                }
+            }
+        } // foreach value
+
+        $item = traverseUnion($z1, $z2, $isOpenZ1, $isOpenZ2 );
+
+    } // for values
+
+    return $item;
+}
 
 ?>
+

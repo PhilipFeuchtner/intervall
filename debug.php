@@ -103,11 +103,11 @@ echo "*** test9: intersectionList\n";
 echo intersectionList( "(1,4] U [3,6) u 7,9" ) . "\n";
 echo intersectionList( "(1,4] U [3,oo) u 7,9" ) . "\n";
 
-echo "*** test10: intersection\n";
-echo intersection( ["(1,4]", "[3,6)", " 7,9"] ) . "\n";
-echo intersection( ["(1,4]", "[3,oo)", "7,9"] ) . "\n";
-echo intersection( ["(1,8]", "[3,oo)", "7,9"] ) . "\n";
-echo intersection( ["(3,9]", "[3,4)"]  ) . "\n";
+echo "*** test10: cannonicalIntersection\n";
+echo cannonicalIntersection( ["(1,4]", "[3,6)", " 7,9"] ) . "\n";
+echo cannonicalIntersection( ["(1,4]", "[3,oo)", "7,9"] ) . "\n";
+echo cannonicalIntersection( ["(1,8]", "[3,oo)", "7,9"] ) . "\n";
+echo cannonicalIntersection( ["(3,9]", "[3,4)"]  ) . "\n";
 
 // $a = ["1,2","3,4","5,6"];
 // echo var_dump($a);
@@ -121,5 +121,21 @@ echo "*** test12: mostCommonIntersection\n";
 echo mostCommonIntersection( ["(-oo,3)","(-oo,1)","[-15/14,oo)"] ) . "\n";
 echo mostCommonIntersection( ["(-oo,-4/3)","(-oo,-1/4)","[-15/14,oo)"] ) . "\n";
 			  
+echo "*** test13: calculatentersection\n";
+
+$v1 = array("left-border" => array(1,5),
+             	   "right-border" => array(3,7),
+             	   "is-open-left" => array(false, false),
+             	   "is-open-right" => array(false, false ));
+$v2 = array("left-border" => array(2,6),
+             	   "right-border" => array(4,7),
+             	   "is-open-left" => array(false, false),
+             	   "is-open-right" => array(false, false ));
+
+echo var_dump(calculateIntersectionSet( array($v1, $v2) )) . "\n";
+
+echo "*** test14: intersection\n";
+//echo intersection( ["(1,3] u (5,7)", "(2,4) u [6,7)"] ) . "\n";
+echo intersection( ["(1,3] u (5,7)", "(2,4) u [6,7)"] ) . "\n";
 
 ?>

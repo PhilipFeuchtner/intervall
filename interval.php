@@ -175,7 +175,7 @@ function intersectionList($input) {
   }
 }
 
-function intersection($input) {
+function cannonicalIntersection($input) {
   $values = parseParts($input);
   
   if ($values["has-error"]) {
@@ -211,4 +211,29 @@ function mostCommonIntersection($input) {
   }
 }
 
+function intersection($input) {
+    $values = array();
+    $index = array();
+
+    foreach($input as $item) {
+        $el = parseString($item);
+
+        if ($el["has-error"]) {
+            return "input error";
+        } else {
+            $values[] = $el;
+            foreach($el["index"] as $k => $v) {
+                $index[$k] = $v;
+            }
+        }
+    }
+
+    $result = calculateIntersectionSet($values);
+
+    return toString($result["left-border"],
+    		    $result["right-border"],
+    		    $result["is-open-left"],
+    		    $result["is-open-right"],
+    		    $index);
+}
 ?>
