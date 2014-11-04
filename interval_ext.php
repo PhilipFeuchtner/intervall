@@ -2,6 +2,11 @@
 
 include "interval_helper.php";
 
+// supress warnings
+// $allowedmacros = array();
+include "mathphp2.php";
+include "macros.php";
+
 define("EMPTY_SET", "DNE");
 
 function parseFloat($input) {
@@ -11,19 +16,12 @@ function parseFloat($input) {
   } elseif (preg_match("/\+?oo/i", $input)) {
     return array(INF, "oo");
   }
-    
-  // test: rational
-  if (preg_match("/\//", $input)) {
-    list($a, $b) = preg_split("/\//", $input);
-  
-    $a1 = (int) preg_replace("/[\(\[]/"," ",$a);
-    $b1 = (int) preg_replace("/[\(\[]/"," ",$b);
-    $v = $a1/$b1;
-    return array($v, "$a1/$b1");
-  } else {
-    $v = (float) preg_replace("/[\(\[]/"," ", $input);
-    return array($v, "$v");
-  }
+
+  $result = eval("return (".mathphp($input, null).");");
+  $error = ($result === false) || is_string($result);
+
+  return array($result, $input, $error);
+
 }
 
 // ######################################################################
@@ -60,23 +58,28 @@ function parseParts($parts) {
       $isOpenRight[] = $emptySet["is-open-right"];
   
     } else {
-    
-      list($a,$b) = preg_split("/\s*,\s*/",$part);
-    
+
+      $iol = preg_match("/^\s*\[/", $part) > 0;
+      $ior = preg_match("/\]\s*$/", $part) > 0;
+
+      // list($a,$b) = preg_split("/\s*,\s*/",$part);
+      preg_match("/^\s*[\(\[]\s*(?P<left>.+)\s*,\s*(?P<right>.+)\s*[\)\]]\s*$/", $part, $match);
+
       // missing colon
-      if (!isset($a) || !isset($b)) {
-	$hasError = true;
-	break;
-      }
-    
-      list($bl, $v1) = parseFloat($a);
-      list($br, $v2) = parseFloat($b);
+      if (!isset($match["left"]) || !isset($match["right"]))
+        return array("has-error" => true);
+
+      list($bl, $v1, $e1) = parseFloat($match["left"]);
+      list($br, $v2, $e2) = parseFloat($match["right"]);
     
       $index["$bl"] = $v1;
       $index["$br"] = $v2;
+
+      if ($e1 || $e2)
+        return array("has-error" => true);
     
-      $iol = preg_match("/\(/", $a) > 0;
-      $ior = preg_match("/\)/", $b) > 0;
+      // $iol = preg_match("/^\s*\[/", $a) > 0;
+      // $ior = preg_match("/\]\s*$/", $b) > 0;
     
       // swap borders if necessary
       if ($bl < $br) {
@@ -87,21 +90,18 @@ function parseParts($parts) {
 	$borderRight[] = $bl;    
       }
     
-      $isOpenLeft[] = $iol;
-      $isOpenRight[] = $ior;
+      $isOpenLeft[] = ! $iol;
+      $isOpenRight[] = ! $ior;
     }
   }
-  
-  if ($hasError) {
-    return array("has-error" => true);
-  } else {
+
     return array("has-error" => false,
 	    "left-border" => $borderLeft,
 	    "right-border" => $borderRight,
 	    "is-open-left" => $isOpenLeft,
 	    "is-open-right" => $isOpenRight,
 	    "index" => $index);
-  }
+
 }
 
 function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight, $index) {
