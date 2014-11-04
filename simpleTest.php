@@ -59,4 +59,16 @@ echo eval("return (".mathphp("20 + 7 *3", null).");") . "\n";
 echo "*** test 18: regexp\n";
 preg_match("/^\s*[\(\[]\s*(?P<left>.+)\s*,\s*(?P<right>.+)\s*[\)\]]\s*$/", "[ 3+5, 5)", $match);
 var_dump($match);
+
+echo "*** test20: toString\n";
+$val = parseString("(1,4] U [3,6) u (-oo, +oo) U dne u (0,-oo) u dne u [1/5, -oo] u (2/3, 3/3)");
+echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"], $val["index"]) . "\n";
+$val = parseString("dne u dne");
+echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"], $val["index"]) . "\n";
+
+$val = parseString("(1,4] U (3,3] u dne");
+echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"], $val["index"]) . "\n";
+$val = parseString("(1,1) u [2,2) u (3,3] u dne");
+echo toString($val["left-border"],$val["right-border"],$val["is-open-left"],$val["is-open-right"], $val["index"]) . "\n";
+
 ?>

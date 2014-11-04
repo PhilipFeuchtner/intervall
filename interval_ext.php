@@ -12,9 +12,9 @@ define("EMPTY_SET", "DNE");
 function parseFloat($input) {
 
   if (preg_match("/-\s*oo/i",$input)) {
-    return array(-INF, "-oo");
+    return array(-INF, "-oo", false);
   } elseif (preg_match("/\+?oo/i", $input)) {
-    return array(INF, "oo");
+    return array(INF, "oo", false);
   }
 
   $result = eval("return (".mathphp($input, null).");");
@@ -48,22 +48,18 @@ function parseParts($parts) {
   $hasError = (count($parts) == 0);
   
   foreach($parts as $part) {
-    // echo "-> " . $part . "\n";
+    // echo "-> " . $part .  "\n";
     
-    if (preg_match("/dne/i", $part)) {
-    
-      $borderLeft[] = $emptySet["left-border"];
-      $borderRight[] = $emptySet["right-border"]; 
-      $isOpenLeft[] = $emptySet["is-open-left"];
-      $isOpenRight[] = $emptySet["is-open-right"];
-  
+    if (preg_match('/dne/i', $part)) {
+      // empty set
+      // do nothing
     } else {
 
       $iol = preg_match("/^\s*\[/", $part) > 0;
       $ior = preg_match("/\]\s*$/", $part) > 0;
 
       // list($a,$b) = preg_split("/\s*,\s*/",$part);
-      preg_match("/^\s*[\(\[]\s*(?P<left>.+)\s*,\s*(?P<right>.+)\s*[\)\]]\s*$/", $part, $match);
+      preg_match('/^\s*[\(\[]\s*(?P<left>.+)\s*,\s*(?P<right>.+)\s*[\)\]]\s*$/', $part, $match);
 
       // missing colon
       if (!isset($match["left"]) || !isset($match["right"]))
@@ -71,37 +67,47 @@ function parseParts($parts) {
 
       list($bl, $v1, $e1) = parseFloat($match["left"]);
       list($br, $v2, $e2) = parseFloat($match["right"]);
-    
-      $index["$bl"] = $v1;
-      $index["$br"] = $v2;
 
       if ($e1 || $e2)
         return array("has-error" => true);
-    
-      // $iol = preg_match("/^\s*\[/", $a) > 0;
-      // $ior = preg_match("/\]\s*$/", $b) > 0;
-    
-      // swap borders if necessary
-      if ($bl < $br) {
-	$borderLeft[] = $bl;
-	$borderRight[] = $br;
+
+      if (($bl == $br) && (!$iol || !$ior)) {
+        // empty set
+        // do nothing
       } else {
-	$borderLeft[] = $br;
-	$borderRight[] = $bl;    
-      }
+        $index["$bl"] = $v1;
+        $index["$br"] = $v2;
+
+        // swap borders if necessary
+        if ($bl < $br) {
+	      $borderLeft[] = $bl;
+	      $borderRight[] = $br;
+        } else {
+	      $borderLeft[] = $br;
+	      $borderRight[] = $bl;
+        }
     
-      $isOpenLeft[] = ! $iol;
-      $isOpenRight[] = ! $ior;
+        $isOpenLeft[] = ! $iol;
+        $isOpenRight[] = ! $ior;
+      }
     }
   }
 
+  if (count($borderLeft) == 0) {
+    return array("has-error" => false,
+  	    "left-border" => array($emptySet["left-border"]),
+  	    "right-border" => array($emptySet["right-border"]),
+  	    "is-open-left" => array($emptySet["is-open-left"]),
+  	    "is-open-right" => array($emptySet["is-open-right"]),
+  	    "index" => $index);
+  } else {
     return array("has-error" => false,
 	    "left-border" => $borderLeft,
 	    "right-border" => $borderRight,
 	    "is-open-left" => $isOpenLeft,
 	    "is-open-right" => $isOpenRight,
 	    "index" => $index);
-
+  }
 }
 
 function toString($borderLeft, $borderRight, $isOpenLeft, $isOpenRight, $index) {
